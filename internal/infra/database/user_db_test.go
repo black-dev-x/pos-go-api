@@ -16,7 +16,7 @@ func TestCreateUser(t *testing.T) {
 	}
 	db.AutoMigrate(&entity.User{})
 	user, _ := entity.NewUser("john@doe.com", "12345")
-	userDB := NewUser(db)
+	userDB := NewUserDB(db)
 
 	error := userDB.Create(user)
 	assert.Nil(t, error)
