@@ -11,6 +11,23 @@ import (
 	"gorm.io/gorm"
 )
 
+func TestFindProductByID(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
+	assert.Nil(t, err)
+	db.AutoMigrate(&entity.Product{})
+	productDB := NewProductDB(db)
+
+	product, error := entity.NewProduct("Test Product", 10.0)
+	assert.Nil(t, error)
+
+	error = productDB.Create(product)
+	assert.Nil(t, error)
+
+	foundProduct, error := productDB.FindByID(product.ID.String())
+	assert.Nil(t, error)
+	assert.Equal(t, product.ID.String(), foundProduct.ID.String())
+}
+
 func TestCreateProduct(t *testing.T) {
 
 	db, err := gorm.Open(sqlite.Open("file::memory:"), &gorm.Config{})
