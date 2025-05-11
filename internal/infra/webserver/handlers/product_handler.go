@@ -20,7 +20,6 @@ func NewProductHandler(db database.ProductDBInterface) *ProductHandler {
 }
 
 func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
-	print("Calling CreateProduct")
 	var createProductDTO dto.CreateProductDTO
 	if err := json.NewDecoder(r.Body).Decode(&createProductDTO); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
