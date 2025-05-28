@@ -7,6 +7,7 @@ import (
 	"github.com/black-dev-x/pos-go-api/internal/entity"
 	"github.com/black-dev-x/pos-go-api/internal/infra/database"
 	"github.com/black-dev-x/pos-go-api/internal/infra/webserver/handlers"
+	"github.com/go-chi/chi/v5"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -21,7 +22,13 @@ func main() {
 	productHandler := handlers.NewProductHandler(database.NewProductDB(db))
 	userHandler := handlers.NewUserHandler(database.NewUserDB(db))
 
-	http.HandleFunc("POST /products", productHandler.CreateProduct)
-	http.HandleFunc("POST /users", userHandler.CreateUser)
+	router := chi.NewRouter()
+	router.Post("/products", productHandler.CreateProduct)
+	router.Post("/users", userHandler.CreateUser)
+
+	http.Handle("/", router)
+
+	// http.HandleFunc("POST /products", productHandler.CreateProduct)
+	// http.HandleFunc("POST /users", userHandler.CreateUser)
 	http.ListenAndServe(":8000", nil)
 }
