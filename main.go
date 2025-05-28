@@ -12,6 +12,12 @@ import (
 	"gorm.io/gorm"
 )
 
+func jsonContentTypeMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		next.ServeHTTP(w, r)
+	})
+}
 func main() {
 	configs.LoadConfig()
 	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
@@ -23,12 +29,16 @@ func main() {
 	userHandler := handlers.NewUserHandler(database.NewUserDB(db))
 
 	router := chi.NewRouter()
+	router.Use(jsonContentTypeMiddleware)
 	router.Post("/products", productHandler.CreateProduct)
-	router.Post("/users", userHandler.CreateUser)
+	router.Put("/products/{id}", productHandler.UpdateProduct)
+	router.Get("/products", productHandler.GetProducts)
+	router.Get("/products/{id}", productHandler.GetProductByID)
 
-	http.Handle("/", router)
+	router.Post("/users", userHandler.CreateUser)
+	// http.Handle("/", router)
 
 	// http.HandleFunc("POST /products", productHandler.CreateProduct)
 	// http.HandleFunc("POST /users", userHandler.CreateUser)
-	http.ListenAndServe(":8000", nil)
+	http.ListenAndServe(":8000", router)
 }

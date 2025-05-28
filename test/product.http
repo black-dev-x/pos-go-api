@@ -1,8 +1,29 @@
+### Create a new product
+# @name createProduct
 POST http://localhost:8000/products
 Content-Type: application/json
+Accept: application/json
 
 {
   "name": "Test Product",
   "description": "This is a test product",
   "price": 19.99
+}
+
+@id = {{createProduct.response.body.id}}
+###
+
+###
+GET http://localhost:8000/products
+
+###
+GET http://localhost:8000/products/{{id}}
+
+###
+PUT http://localhost:8000/products/{{id}}
+Content-Type: application/json
+
+{
+  "name": "Updated Test Product",
+  "price": 24.99
 }
